@@ -8,13 +8,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-change-me")
-DEBUG = os.getenv("DEBUG", "True").lower() in ("1", "true", "yes")
+DEBUG = os.getenv("DEBUG", "false").lower() in ("1", "true", "yes")
 
 if not DEBUG and SECRET_KEY == "django-insecure-change-me":
     sys.exit("ERROR: SECRET_KEY env var not set.")
 
 ALLOWED_HOSTS = [h.strip() for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h.strip()]
-for _h in ("moyaopsapp", "localhost", "127.0.0.1"):
+for _h in ("moyaopsapp", "192.168.1.132"):
     if _h not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(_h)
 
