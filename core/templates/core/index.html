@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoyaOps — La plataforma SaaS para servicios técnicos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #16a34a; --green-light: #22c55e; --green-dark: #15803d;
+      --navy: #0f172a; --navy-soft: #1e293b;
+      --gray-bg: #f8fafc; --gray-border: #e2e8f0; --gray-text: #64748b;
+      --white: #ffffff;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: 0.7s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: var(--font); font-size: 16px; }
+    body { overflow: hidden; height: 100vh; background: var(--navy); }
+
+    /* ── FULLPAGE HORIZONTAL ── */
+    #fullpage {
+      display: flex; flex-direction: row;
+      width: calc(7 * 100vw); height: 100vh;
+      transition: transform var(--transition); will-change: transform;
+    }
+    .fp-section { width: 100vw; flex-shrink: 0; height: 100vh; position: relative; overflow: hidden; }
+
+    /* ── NAVBAR ── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 0 48px; height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    #navbar.scrolled { background: rgba(15,23,42,.95); backdrop-filter: blur(12px); box-shadow: 0 1px 0 rgba(255,255,255,.08); }
+    #navbar.light    { background: rgba(255,255,255,.95); backdrop-filter: blur(12px); box-shadow: 0 1px 0 var(--gray-border); }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-icon { width: 34px; height: 34px; background: var(--green); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900; color: white; }
+    .nav-logo-text { font-size: 19px; font-weight: 800; color: white; letter-spacing: -.5px; }
+    .nav-logo-text span { color: var(--green-light); }
+    #navbar.light .nav-logo-text { color: var(--navy); }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { text-decoration: none; font-size: 14px; font-weight: 500; color: rgba(255,255,255,.75); transition: color .2s; cursor: pointer; }
+    .nav-links a:hover { color: white; }
+    #navbar.light .nav-links a { color: var(--gray-text); }
+    #navbar.light .nav-links a:hover { color: var(--navy); }
+    .nav-cta { background: var(--green) !important; color: white !important; padding: 9px 18px; border-radius: 9px; font-weight: 700 !important; }
+    .nav-cta:hover { background: var(--green-dark) !important; color: white !important; }
+
+    /* ── GLOBAL SEARCH BAR ── */
+    #global-search {
+      position: fixed; top: 78px; left: 50%; transform: translateX(-50%);
+      z-index: 999; display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(14px);
+      border: 1.5px solid var(--gray-border); border-radius: 14px;
+      padding: 11px 20px; width: 480px; max-width: calc(100vw - 48px);
+      box-shadow: 0 4px 24px rgba(0,0,0,.13); cursor: text;
+      transition: box-shadow .2s, border-color .2s;
+    }
+    #global-search:focus-within { border-color: var(--green); box-shadow: 0 4px 24px rgba(22,163,74,.2); }
+    #global-search .gs-icon { font-size: 17px; flex-shrink: 0; opacity: .45; }
+    #global-search input { border:none; outline:none; background:transparent; font-size:15px; color:var(--navy); font-family:var(--font); width:100%; }
+    #global-search input::placeholder { color:#94a3b8; }
+
+    /* ── BOTTOM DOTS NAV ── */
+    #fp-nav {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+      z-index: 999; display: flex; align-items: center; gap: 16px;
+      background: rgba(255,255,255,.93); backdrop-filter: blur(12px);
+      border-radius: 100px; padding: 11px 28px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.13); transition: background .3s, box-shadow .3s;
+    }
+    #fp-nav.dark { background: rgba(15,23,42,.88); box-shadow: 0 4px 24px rgba(0,0,0,.5); }
+    .fp-dot {
+      width: 13px; height: 13px; border-radius: 50%; background: #cbd5e1;
+      border: none; cursor: pointer; transition: all .3s; position: relative; flex-shrink: 0;
+    }
+    .fp-dot.active { background: var(--green); transform: scale(1.55); box-shadow: 0 0 0 3px rgba(22,163,74,.28); }
+    .fp-dot:hover { transform: scale(1.3); }
+    .fp-dot.active:hover { transform: scale(1.55); }
+    #fp-nav.dark .fp-dot { background: rgba(255,255,255,.3); }
+    #fp-nav.dark .fp-dot.active { background: var(--green-light); box-shadow: 0 0 0 3px rgba(34,197,94,.3); }
+    .fp-dot::after {
+      content: attr(data-label); position: absolute; bottom: 24px; left: 50%;
+      transform: translateX(-50%); white-space: nowrap; font-size: 10px; font-weight: 600;
+      background: var(--navy); color: white; padding: 3px 8px; border-radius: 6px;
+      opacity: 0; transition: opacity .2s; pointer-events: none;
+    }
+    .fp-dot:hover::after { opacity: 1; }
+    #fp-nav.dark .fp-dot::after { background: white; color: var(--navy); }
+
+    /* ── BUTTONS ── */
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: white; padding: 13px 26px; border-radius: 11px; font-size: 15px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; font-family: var(--font); transition: all .2s; }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,163,74,.4); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: rgba(255,255,255,.8); padding: 13px 26px; border-radius: 11px; font-size: 15px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255,255,255,.22); cursor: pointer; font-family: var(--font); transition: all .2s; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.5); color: white; background: rgba(255,255,255,.05); }
+
+    /* ── SHARED TYPOGRAPHY ── */
+    .section-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--green); margin-bottom: 10px; }
+    .section-title { font-size: clamp(28px, 3.5vw, 48px); font-weight: 900; line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 14px; }
+    .section-sub { font-size: 16px; color: var(--gray-text); line-height: 1.7; margin-bottom: 36px; max-width: 500px; }
+
+    /* ══ S1 HERO ══ */
+    #s-hero { background: var(--navy); display: flex; align-items: center; padding: 0 48px; gap: 48px; }
+    #s-hero::before { content:''; position:absolute; top:-180px; right:-80px; width:640px; height:640px; background:radial-gradient(circle,rgba(22,163,74,.15) 0%,transparent 68%); pointer-events:none; }
+    #s-hero::after  { content:''; position:absolute; bottom:-160px; left:-80px; width:480px; height:480px; background:radial-gradient(circle,rgba(34,197,94,.07) 0%,transparent 68%); pointer-events:none; }
+    .hero-content { flex: 1; max-width: 540px; position: relative; z-index: 2; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 7px; background: rgba(22,163,74,.14); border: 1px solid rgba(22,163,74,.3); color: var(--green-light); padding: 5px 13px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 22px; }
+    .hero-title { font-size: clamp(34px, 4.2vw, 58px); font-weight: 900; line-height: 1.08; color: white; letter-spacing: -2px; margin-bottom: 18px; }
+    .hero-title .accent { color: var(--green-light); }
+    .hero-sub { font-size: 17px; color: rgba(255,255,255,.6); line-height: 1.7; margin-bottom: 32px; max-width: 440px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+    .hero-stats { display: flex; gap: 28px; }
+    .hero-stat-num { font-size: 26px; font-weight: 800; color: white; line-height: 1; }
+    .hero-stat-num span { color: var(--green-light); }
+    .hero-stat-label { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 3px; }
+
+    /* Carousel */
+    .hero-visual { flex: 1; max-width: 520px; position: relative; height: 480px; z-index: 2; }
+    .carousel-slide { position: absolute; width: 340px; border-radius: 14px; overflow: hidden; box-shadow: 0 28px 56px rgba(0,0,0,.55); transition: all .75s cubic-bezier(.34,1.25,.64,1); }
+    .carousel-slide.pos-center { top:50%; left:50%; transform:translate(-50%,-50%) rotate(-2deg) scale(1); z-index:3; opacity:1; }
+    .carousel-slide.pos-top    { top:6%; left:4%; transform:rotate(4deg) scale(.86); z-index:2; opacity:.7; }
+    .carousel-slide.pos-bottom { bottom:4%; right:0%; transform:rotate(-5deg) scale(.82); z-index:1; opacity:.6; }
+    .mock-screen { width:100%; background:var(--navy-soft); }
+    .mock-header { height:42px; background:var(--navy); display:flex; align-items:center; padding:0 14px; gap:10px; border-bottom:1px solid rgba(255,255,255,.07); }
+    .mock-logo-sm { width:22px;height:22px; background:var(--green); border-radius:5px; display:flex;align-items:center;justify-content:center; font-size:10px;font-weight:900;color:white; }
+    .mock-title { font-size:11px; font-weight:600; color:rgba(255,255,255,.8); }
+    .mock-badge-sm { margin-left:auto; background:rgba(22,163,74,.22); color:var(--green-light); padding:2px 7px; border-radius:100px; font-size:9px; font-weight:600; }
+    .mock-body { padding:11px; }
+    .mock-row { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.04); }
+    .mock-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+    .mock-dot.g{background:var(--green-light)}.mock-dot.y{background:#f59e0b}.mock-dot.b{background:#3b82f6}
+    .mock-line { height:7px; border-radius:3px; background:rgba(255,255,255,.11); }
+    .mock-amt  { margin-left:auto; font-size:9px; font-weight:600; color:var(--green-light); }
+    .mock-cards { display:flex; gap:7px; margin-top:9px; }
+    .mock-card  { flex:1; background:rgba(255,255,255,.05); border-radius:7px; padding:7px; }
+    .mock-card-num { font-size:14px; font-weight:800; color:white; }
+    .mock-card-lbl { font-size:8px; color:rgba(255,255,255,.4); margin-top:2px; }
+    .mock-chart { height:36px; display:flex; align-items:flex-end; gap:3px; margin-top:8px; }
+    .mock-bar { flex:1; border-radius:2px 2px 0 0; background:rgba(22,163,74,.28); }
+    .mock-bar.hi { background:var(--green); }
+
+    /* ══ S2 BUSCADOR ══ */
+    #s-search { background:var(--gray-bg); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 48px 40px; text-align:center; }
+    #s-search .section-title { color:var(--navy); }
+    .search-bar { display:flex; align-items:center; background:white; border:2px solid var(--gray-border); border-radius:14px; padding:5px 5px 5px 18px; width:100%; max-width:600px; box-shadow:0 4px 20px rgba(0,0,0,.06); margin-bottom:32px; transition:border-color .2s,box-shadow .2s; }
+    .search-bar:focus-within { border-color:var(--green); box-shadow:0 4px 20px rgba(22,163,74,.14); }
+    .search-bar input { flex:1; border:none; outline:none; font-size:14px; color:var(--navy); background:transparent; font-family:var(--font); }
+    .search-bar input::placeholder { color:#94a3b8; }
+    .search-divider { width:1px; height:22px; background:var(--gray-border); margin:0 14px; }
+    .search-loc { display:flex; align-items:center; gap:5px; font-size:13px; color:var(--gray-text); cursor:pointer; }
+    .search-btn { background:var(--green); color:white; border:none; padding:11px 22px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; font-family:var(--font); margin-left:10px; transition:background .2s; }
+    .search-btn:hover { background:var(--green-dark); }
+    .cat-grid { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-bottom:32px; max-width:660px; }
+    .cat-tile { display:flex; align-items:center; gap:7px; background:white; border:1.5px solid var(--gray-border); border-radius:10px; padding:9px 18px; font-size:13px; font-weight:600; color:var(--navy); cursor:pointer; transition:all .2s; }
+    .cat-tile:hover { border-color:var(--green); color:var(--green-dark); background:rgba(22,163,74,.05); transform:translateY(-2px); box-shadow:0 4px 12px rgba(22,163,74,.12); }
+    .store-banner { display:flex; align-items:center; gap:14px; background:var(--navy); color:white; padding:14px 24px; border-radius:12px; font-size:14px; max-width:540px; width:100%; }
+    .store-banner strong { color:var(--green-light); }
+    .store-banner a { margin-left:auto; background:var(--green); color:white; padding:7px 14px; border-radius:7px; font-size:12px; font-weight:700; text-decoration:none; white-space:nowrap; transition:background .2s; }
+    .store-banner a:hover { background:var(--green-dark); }
+
+    /* ══ S3 CONFIANZA ══ */
+    #s-trust { background:white; display:flex; align-items:center; padding:80px 48px 48px; gap:56px; }
+    .trust-left { flex:1; max-width:420px; }
+    #s-trust .section-title { color:var(--navy); }
+    .trust-features { display:flex; flex-direction:column; gap:18px; margin-top:30px; }
+    .trust-feature { display:flex; gap:14px; }
+    .trust-icon { width:42px;height:42px; background:rgba(22,163,74,.1); border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:18px; flex-shrink:0; }
+    .trust-feature h4 { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:3px; }
+    .trust-feature p  { font-size:12px; color:var(--gray-text); line-height:1.5; }
+    .trust-right { flex:1; }
+    .shop-list { display:flex; flex-direction:column; gap:10px; }
+    .shop-card { display:flex; align-items:center; gap:14px; background:var(--gray-bg); border:1px solid var(--gray-border); border-radius:12px; padding:12px 16px; transition:all .2s; cursor:default; }
+    .shop-card:hover { border-color:var(--green); box-shadow:0 4px 14px rgba(22,163,74,.1); transform:translateX(3px); }
+    .shop-avatar { width:40px;height:40px; border-radius:10px; display:flex;align-items:center;justify-content:center; font-size:20px; flex-shrink:0; }
+    .shop-info h5 { font-size:13px; font-weight:700; color:var(--navy); }
+    .shop-info p  { font-size:11px; color:var(--gray-text); margin-top:2px; }
+    .shop-meta { margin-left:auto; text-align:right; }
+    .shop-rating { display:flex; align-items:center; gap:3px; font-size:12px; font-weight:700; color:var(--navy); }
+    .shop-tag { font-size:10px; color:var(--green-dark); background:rgba(22,163,74,.1); padding:2px 7px; border-radius:100px; margin-top:3px; display:inline-block; }
+
+    /* ══ S4 SISTEMA ══ */
+    #s-system { background:var(--gray-bg); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 48px; text-align:center; }
+    #s-system .section-title { color:var(--navy); }
+    #s-system .section-sub   { color:var(--gray-text); margin:0 auto 44px; }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:100%; max-width:880px; }
+    .feature-card { background:white; border:1px solid var(--gray-border); border-radius:14px; padding:22px; text-align:left; transition:all .2s; }
+    .feature-card:hover { border-color:var(--green); transform:translateY(-3px); box-shadow:0 8px 24px rgba(22,163,74,.08); }
+    .feature-card-icon { font-size:28px; margin-bottom:12px; display:block; }
+    .feature-card h4 { font-size:15px; font-weight:700; color:var(--navy); margin-bottom:7px; }
+    .feature-card p  { font-size:12px; color:var(--gray-text); line-height:1.6; }
+
+    /* ══ S5 REPARACIONES ══ */
+    #s-repairs { background:var(--gray-bg); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 48px; }
+    #s-repairs .section-title { color:var(--navy); }
+    .repairs-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; width:100%; max-width:940px; margin-top:36px; }
+    .repair-card { position:relative; height:190px; border-radius:14px; overflow:hidden; cursor:pointer; }
+    .repair-card:first-child { grid-column:span 2; height:230px; }
+    .repair-bg { position:absolute; inset:0; transition:transform .4s; }
+    .repair-card:hover .repair-bg { transform:scale(1.06); }
+    .repair-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(15,23,42,.88) 0%,rgba(15,23,42,.18) 55%,transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:18px; }
+    .repair-cat   { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--green-light); margin-bottom:3px; }
+    .repair-title { font-size:13px; font-weight:700; color:white; line-height:1.3; }
+    .repair-price { margin-top:4px; font-size:11px; color:rgba(255,255,255,.65); }
+    .play-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:44px;height:44px; background:rgba(255,255,255,.2); backdrop-filter:blur(8px); border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:18px; transition:all .2s; }
+    .repair-card:hover .play-btn { background:var(--green); transform:translate(-50%,-50%) scale(1.1); }
+    .bg-purple{background:linear-gradient(135deg,#7c3aed,#4f46e5)}.bg-orange{background:linear-gradient(135deg,#ea580c,#dc2626)}.bg-teal{background:linear-gradient(135deg,#0891b2,#0e7490)}.bg-green2{background:linear-gradient(135deg,#16a34a,#15803d)}.bg-pink{background:linear-gradient(135deg,#db2777,#9333ea)}
+
+    /* ══ S6 PRECIOS ══ */
+    #s-pricing { background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 48px; text-align:center; }
+    #s-pricing .section-title { color:var(--navy); }
+    .price-toggle-wrap { display:flex; align-items:center; gap:6px; margin-bottom:36px; background:var(--gray-bg); border-radius:12px; padding:5px; border:1px solid var(--gray-border); }
+    .price-toggle-btn { background:none; border:none; font-size:13px; font-weight:600; color:var(--gray-text); cursor:pointer; padding:7px 18px; border-radius:9px; transition:all .2s; font-family:var(--font); display:flex; align-items:center; gap:7px; }
+    .price-toggle-btn.active { color:var(--navy); background:white; box-shadow:0 2px 8px rgba(0,0,0,.09); }
+    .discount-badge { background:rgba(22,163,74,.12); color:var(--green-dark); font-size:10px; font-weight:700; padding:2px 8px; border-radius:100px; }
+    .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; width:100%; max-width:840px; }
+    .price-card { border:1.5px solid var(--gray-border); border-radius:18px; padding:28px; text-align:left; position:relative; transition:all .2s; }
+    .price-card:hover:not(.coming-soon) { transform:translateY(-4px); box-shadow:0 12px 28px rgba(0,0,0,.07); }
+    .price-card.featured { background:var(--navy); border-color:var(--green); box-shadow:0 16px 44px rgba(22,163,74,.18); }
+    .price-card.coming-soon { opacity:.8; }
+    .price-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--green); color:white; font-size:10px; font-weight:700; padding:3px 12px; border-radius:100px; white-space:nowrap; }
+    .price-plan   { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray-text); margin-bottom:7px; }
+    .price-amount { font-size:38px; font-weight:900; color:var(--navy); letter-spacing:-2px; line-height:1; margin-bottom:3px; }
+    .price-amount sup { font-size:18px; font-weight:700; vertical-align:super; letter-spacing:0; }
+    .price-period { font-size:12px; color:var(--gray-text); margin-bottom:20px; }
+    .price-annual-note { font-size:11px; color:var(--green-dark); margin-top:-16px; margin-bottom:18px; font-weight:600; display:none; }
+    .price-card.featured .price-plan   { color:rgba(255,255,255,.5); }
+    .price-card.featured .price-amount { color:white; }
+    .price-card.featured .price-period { color:rgba(255,255,255,.5); }
+    .price-card.featured .price-annual-note { color:var(--green-light); }
+    .price-soon-badge { display:inline-block; background:rgba(22,163,74,.1); color:var(--green-dark); border:1px solid rgba(22,163,74,.25); font-size:11px; font-weight:700; padding:4px 12px; border-radius:100px; margin-bottom:10px; }
+    .price-soon-text { font-size:13px; color:var(--gray-text); line-height:1.6; margin-bottom:24px; }
+    .price-features { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:24px; }
+    .price-features li { display:flex; align-items:center; gap:9px; font-size:13px; color:var(--navy); }
+    .price-features li::before { content:'✓'; width:16px;height:16px; background:rgba(22,163,74,.12); color:var(--green); border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:9px;font-weight:700; flex-shrink:0; }
+    .price-card.featured .price-features li { color:rgba(255,255,255,.8); }
+    .price-card.featured .price-features li::before { background:rgba(22,163,74,.28); color:var(--green-light); }
+    .price-btn { display:block; width:100%; padding:11px; border-radius:10px; font-size:13px; font-weight:700; text-align:center; border:1.5px solid var(--gray-border); color:var(--navy); background:transparent; cursor:pointer; font-family:var(--font); transition:all .2s; }
+    .price-btn:hover { border-color:var(--green); color:var(--green-dark); }
+    .price-card.featured .price-btn { background:var(--green); border-color:var(--green); color:white; }
+    .price-card.featured .price-btn:hover { background:var(--green-dark); }
+
+    /* ══ S7 PAÍSES ══ */
+    #s-countries { background:var(--navy); display:flex; align-items:center; padding:80px 48px; gap:52px; }
+    .countries-left { flex:0 0 460px; }
+    #s-countries .section-title { color:white; text-align:left; }
+    #s-countries .section-sub   { color:rgba(255,255,255,.6); text-align:left; margin-bottom:0; }
+    .counters { display:flex; gap:28px; margin-top:36px; }
+    .counter-num { font-size:38px; font-weight:900; color:white; line-height:1; letter-spacing:-2px; }
+    .c-suffix { color:var(--green-light); }
+    .counter-label { font-size:12px; color:rgba(255,255,255,.5); margin-top:5px; }
+    .country-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:24px; }
+    .country-tag { display:flex; align-items:center; gap:5px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:100px; padding:5px 12px; font-size:12px; color:rgba(255,255,255,.75); font-weight:500; }
+    .country-tag.on { background:rgba(22,163,74,.14); border-color:rgba(22,163,74,.3); color:var(--green-light); }
+    .map-wrap { flex:1; display:flex; align-items:center; justify-content:center; }
+    .map-svg { width:100%; max-width:400px; opacity:.88; }
+    .footer-bar { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.32); border-top:1px solid rgba(255,255,255,.07); padding:14px 48px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+    .footer-logo { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; color:white; }
+    .footer-logo span { color:var(--green-light); }
+    .footer-links { display:flex; gap:18px; list-style:none; }
+    .footer-links a { font-size:12px; color:rgba(255,255,255,.5); text-decoration:none; transition:color .2s; }
+    .footer-links a:hover { color:white; }
+    .footer-social { margin-left:auto; display:flex; gap:9px; }
+    .social-btn { width:32px;height:32px; background:rgba(255,255,255,.07); border-radius:7px; display:flex;align-items:center;justify-content:center; text-decoration:none; font-size:14px; transition:background .2s; }
+    .social-btn:hover { background:var(--green); }
+
+    /* ══ CHATBOT ══ */
+    .chat-fab-bubble { position:fixed; bottom:82px; right:26px; z-index:9999; width:54px;height:54px; background:linear-gradient(135deg,var(--green),var(--green-dark)); border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:25px; cursor:pointer; border:none; box-shadow:0 8px 24px rgba(22,163,74,.42); transition:transform .2s,box-shadow .2s; }
+    .chat-fab-bubble:hover { transform:scale(1.08); box-shadow:0 12px 32px rgba(22,163,74,.55); }
+    .chat-fab-panel { position:fixed; bottom:150px; right:26px; z-index:9998; width:330px; background:white; border-radius:18px; box-shadow:0 24px 56px rgba(0,0,0,.22); overflow:hidden; display:none; flex-direction:column; transform-origin:bottom right; }
+    .chat-fab-panel.open { display:flex; animation:chatIn .28s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes chatIn { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
+    .chat-panel-header { background:linear-gradient(135deg,var(--navy),var(--navy-soft)); padding:18px; display:flex; align-items:center; gap:12px; }
+    .chat-avatar { width:42px;height:42px; background:var(--green); border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:20px; }
+    .chat-panel-header h4 { font-size:14px; font-weight:700; color:white; }
+    .chat-panel-header p  { font-size:11px; color:rgba(255,255,255,.6); margin-top:1px; }
+    .chat-close { margin-left:auto; background:rgba(255,255,255,.1); border:none; color:white; width:26px;height:26px; border-radius:50%; cursor:pointer; font-size:14px; display:flex;align-items:center;justify-content:center; transition:background .2s; }
+    .chat-close:hover { background:rgba(255,255,255,.2); }
+    .chat-messages { padding:16px; flex:1; max-height:190px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+    .chat-msg { max-width:82%; padding:9px 13px; border-radius:12px; font-size:13px; line-height:1.5; }
+    .chat-msg.bot { background:var(--gray-bg); color:var(--navy); border-bottom-left-radius:3px; align-self:flex-start; }
+    .chat-msg.user { background:var(--green); color:white; border-bottom-right-radius:3px; align-self:flex-end; }
+    .chat-quick { padding:0 14px 10px; display:flex; flex-wrap:wrap; gap:6px; }
+    .chat-qr { background:rgba(22,163,74,.1); border:1px solid rgba(22,163,74,.2); color:var(--green-dark); border-radius:100px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer; font-family:var(--font); transition:all .2s; }
+    .chat-qr:hover { background:var(--green); color:white; border-color:var(--green); }
+    .chat-input-row { display:flex; gap:7px; padding:10px 14px; border-top:1px solid var(--gray-border); }
+    .chat-input-row input { flex:1; border:1.5px solid var(--gray-border); border-radius:9px; padding:8px 12px; font-size:13px; outline:none; font-family:var(--font); transition:border-color .2s; }
+    .chat-input-row input:focus { border-color:var(--green); }
+    .chat-send { background:var(--green); color:white; border:none; width:34px;height:34px; border-radius:9px; cursor:pointer; font-size:15px; display:flex;align-items:center;justify-content:center; transition:background .2s; }
+    .chat-send:hover { background:var(--green-dark); }
+
+    /* ══ REVIEWS WIDGET ══ */
+    #reviews-widget {
+      position: fixed; right: 0; top: 50%; transform: translateY(-50%);
+      z-index: 997; display: flex; align-items: stretch;
+      max-height: calc(100vh - 40px);
+    }
+    #reviews-tab {
+      writing-mode: vertical-lr; transform: rotate(180deg);
+      background: var(--green); color: white;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 20px 10px; border-radius: 10px 0 0 10px;
+      cursor: pointer; user-select: none; transition: background .2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    #reviews-tab:hover { background: var(--green-dark); }
+    #reviews-panel {
+      width: 0; overflow: hidden; background: white;
+      border-radius: 12px 0 0 12px;
+      box-shadow: -4px 0 24px rgba(0,0,0,.14);
+      transition: width .35s cubic-bezier(.34,1.25,.64,1);
+    }
+    #reviews-widget.open #reviews-panel { width: 262px; overflow-y: auto; max-height: calc(100vh - 40px); }
+    .rev-inner { width: 262px; padding: 16px; }
+    .rev-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .rev-head h4 { font-size:13px; font-weight:700; color:var(--navy); }
+    .rev-head span { font-size:10px; color:var(--green-dark); background:rgba(22,163,74,.1); padding:2px 7px; border-radius:100px; font-weight:600; }
+    .rev-item { display:block; border-bottom:1px solid var(--gray-border); padding-bottom:10px; margin-bottom:10px; }
+    .rev-item:last-child { border-bottom:none; padding-bottom:0; margin-bottom:0; }
+    .rev-top { display:flex; align-items:center; gap:9px; margin-bottom:7px; }
+    .rev-av { width:34px;height:34px; border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:12px;font-weight:700;color:white;flex-shrink:0; }
+    .rev-name { font-size:12px; font-weight:700; color:var(--navy); }
+    .rev-stars { font-size:11px; color:#f59e0b; }
+    .rev-text { font-size:12px; color:var(--gray-text); line-height:1.5; margin-bottom:7px; }
+    .rev-shop { display:inline-flex; align-items:center; gap:4px; background:rgba(22,163,74,.1); color:var(--green-dark); font-size:10px; font-weight:600; padding:2px 8px; border-radius:100px; }
+
+    /* ══ RESPONSIVE ══ */
+    @media(max-width:900px){
+      body { overflow-y:auto; overflow-x:hidden; height:auto; }
+      #fullpage { transform:none !important; transition:none; flex-direction:column; width:100%; }
+      .fp-section { width:100%; height:auto; min-height:100svh; }
+      #fp-nav { bottom:12px; padding:8px 16px; gap:10px; }
+      .fp-dot { width:10px;height:10px; }
+      #navbar { padding:0 20px; }
+      .nav-links li:not(:last-child) { display:none; }
+      #s-hero { flex-direction:column; padding:96px 20px 56px; text-align:center; gap:36px; }
+      .hero-content { max-width:100%; }
+      .hero-badge,.hero-actions,.hero-stats { justify-content:center; }
+      .hero-badge { margin:0 auto 20px; }
+      .hero-visual { width:100%;max-width:100%;height:260px; }
+      #s-search,#s-system,#s-repairs,#s-pricing { padding:76px 20px; }
+      #s-trust { flex-direction:column; padding:76px 20px 40px; }
+      .features-grid { grid-template-columns:1fr 1fr; }
+      .repairs-grid { grid-template-columns:1fr 1fr; }
+      .repair-card:first-child { grid-column:span 2; }
+      .pricing-grid { grid-template-columns:1fr; max-width:340px; }
+      #s-countries { flex-direction:column; padding:76px 20px 90px; }
+      .countries-left { flex:none; width:100%; }
+      .footer-bar { padding:12px 20px; }
+      #global-search { top:72px; width:calc(100vw - 48px); }
+      #reviews-widget { display:none; }
+      .chat-fab-bubble { bottom:70px; }
+      .chat-fab-panel { bottom:138px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- GLOBAL SEARCH (fijo en todas las secciones) -->
+<div id="global-search" onclick="goTo(1)">
+  <span class="gs-icon">🔍</span>
+  <input type="text" placeholder="Buscar en la tienda..." onkeydown="if(event.key==='Enter')goTo(1)" onclick="event.stopPropagation()">
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" onclick="goTo(0);return false" class="nav-logo">
+    <div class="nav-logo-icon">M</div>
+    <span class="nav-logo-text">Moya<span>Ops</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a onclick="goTo(3)">Sistema de gestión</a></li>
+    <li><a onclick="goTo(2)">Quiénes somos</a></li>
+    <li><a onclick="goTo(4)">Qué hacemos</a></li>
+    <li><a onclick="goTo(5)">Precios</a></li>
+    <li><a href="{{ cfg.app_url }}" class="nav-cta" target="_blank">Entrar al sistema →</a></li>
+  </ul>
+</nav>
+
+<!-- DOTS NAV -->
+<div id="fp-nav" class="dark">
+  <button class="fp-dot active" onclick="goTo(0)" data-label="Inicio"></button>
+  <button class="fp-dot" onclick="goTo(1)" data-label="Buscar"></button>
+  <button class="fp-dot" onclick="goTo(2)" data-label="Confianza"></button>
+  <button class="fp-dot" onclick="goTo(3)" data-label="Sistema"></button>
+  <button class="fp-dot" onclick="goTo(4)" data-label="Servicios"></button>
+  <button class="fp-dot" onclick="goTo(5)" data-label="Precios"></button>
+  <button class="fp-dot" onclick="goTo(6)" data-label="Países"></button>
+</div>
+
+<div id="fullpage">
+
+  <!-- S1 HERO -->
+  <section class="fp-section" id="s-hero">
+    <div class="hero-content">
+      <div class="hero-badge">{{ cfg.hero_badge }}</div>
+      <h1 class="hero-title">
+        ¿Eres técnico<br>o tienda?<br>
+        <span class="accent">Únete y publícitate<br>con nosotros.</span>
+      </h1>
+      <p class="hero-sub">{{ cfg.hero_subtitle }}</p>
+      <div class="hero-actions">
+        <a href="{{ cfg.app_url }}" class="btn-primary" target="_blank">Comenzar gratis →</a>
+        <button class="btn-ghost" onclick="goTo(3)">▶ Ver el sistema</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-num"><span>{{ cfg.technicians_count }}</span>+</div><div class="hero-stat-label">Técnicos activos</div></div>
+        <div><div class="hero-stat-num"><span>{{ cfg.countries_count }}</span></div><div class="hero-stat-label">Países</div></div>
+        <div><div class="hero-stat-num"><span>{{ cfg.orders_count }}k</span>+</div><div class="hero-stat-label">Órdenes gestionadas</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div style="position:relative;width:100%;height:100%;perspective:1000px">
+        <div class="carousel-slide pos-top" id="cs0">
+          <div class="mock-screen">
+            <div class="mock-header"><div class="mock-logo-sm">M</div><span class="mock-title">Órdenes</span><span class="mock-badge-sm">8 activas</span></div>
+            <div class="mock-body">
+              <div class="mock-row"><div class="mock-dot g"></div><div class="mock-line" style="width:110px"></div><span class="mock-amt">€85</span></div>
+              <div class="mock-row"><div class="mock-dot y"></div><div class="mock-line" style="width:85px"></div><span class="mock-amt">€140</span></div>
+              <div class="mock-row"><div class="mock-dot b"></div><div class="mock-line" style="width:100px"></div><span class="mock-amt">€60</span></div>
+              <div class="mock-row"><div class="mock-dot g"></div><div class="mock-line" style="width:75px"></div><span class="mock-amt">€200</span></div>
+              <div class="mock-cards">
+                <div class="mock-card"><div class="mock-card-num">12</div><div class="mock-card-lbl">Hoy</div></div>
+                <div class="mock-card"><div class="mock-card-num">€1.2k</div><div class="mock-card-lbl">Ingresos</div></div>
+                <div class="mock-card"><div class="mock-card-num">4.9★</div><div class="mock-card-lbl">Rating</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-slide pos-center" id="cs1">
+          <div class="mock-screen">
+            <div class="mock-header"><div class="mock-logo-sm">M</div><span class="mock-title">Dashboard</span><span class="mock-badge-sm">● En vivo</span></div>
+            <div class="mock-body">
+              <div class="mock-cards">
+                <div class="mock-card"><div class="mock-card-num" style="color:var(--green-light)">€4.8k</div><div class="mock-card-lbl">Ventas mes</div></div>
+                <div class="mock-card"><div class="mock-card-num">23</div><div class="mock-card-lbl">Órdenes</div></div>
+              </div>
+              <div class="mock-chart">
+                <div class="mock-bar" style="height:30%"></div><div class="mock-bar" style="height:55%"></div>
+                <div class="mock-bar hi" style="height:80%"></div><div class="mock-bar" style="height:60%"></div>
+                <div class="mock-bar hi" style="height:95%"></div><div class="mock-bar" style="height:68%"></div>
+                <div class="mock-bar hi" style="height:100%"></div>
+              </div>
+              <div class="mock-row" style="margin-top:7px"><div class="mock-dot g"></div><div class="mock-line" style="width:90px"></div><span class="mock-amt">+12%</span></div>
+              <div class="mock-row"><div class="mock-dot y"></div><div class="mock-line" style="width:120px"></div><span class="mock-amt">5 pend.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-slide pos-bottom" id="cs2">
+          <div class="mock-screen">
+            <div class="mock-header"><div class="mock-logo-sm">M</div><span class="mock-title">Factura</span><span class="mock-badge-sm">Pagada ��</span></div>
+            <div class="mock-body">
+              <div class="mock-row"><div class="mock-line" style="width:55px"></div><div class="mock-amt" style="margin-left:6px;font-size:10px;color:rgba(255,255,255,.7)">FS-2025-00042</div></div>
+              <div class="mock-row"><div class="mock-dot g"></div><div class="mock-line" style="width:100px"></div></div>
+              <div class="mock-row"><div class="mock-dot y"></div><div class="mock-line" style="width:76px"></div></div>
+              <div style="height:1px;background:rgba(255,255,255,.09);margin:7px 0"></div>
+              <div class="mock-row"><div class="mock-line" style="width:45px"></div><span class="mock-amt" style="color:white;font-size:13px">€185.00</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- S2 BUSCADOR -->
+  <section class="fp-section" id="s-search">
+    <div class="section-eyebrow">Tienda y accesorios</div>
+    <h2 class="section-title" style="color:var(--navy)">Busca en nuestra tienda<br>tus accesorios o repuestos</h2>
+    <p class="section-sub">Miles de productos de talleres verificados, con garantía incluida y envío rápido.</p>
+    <div class="search-bar">
+      <span style="font-size:17px;margin-right:3px">🔍</span>
+      <input type="text" placeholder="Ej: cargador iPhone 15, pantalla Samsung S24...">
+      <div class="search-divider"></div>
+      <div class="search-loc"><span>📍</span><span>Madrid, España</span></div>
+      <button class="search-btn">Buscar</button>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-tile">📱 Móviles</div>
+      <div class="cat-tile">💻 Portátiles</div>
+      <div class="cat-tile">📟 Tablets</div>
+      <div class="cat-tile">🎮 Consolas</div>
+      <div class="cat-tile">📺 TV &amp; Audio</div>
+      <div class="cat-tile">🖨️ Impresoras</div>
+      <div class="cat-tile">⌨️ Periféricos</div>
+      <div class="cat-tile">⚙️ Otros</div>
+    </div>
+    <div class="store-banner">
+      <span style="font-size:20px">🛒</span>
+      <span>¿Buscas también servicios? <strong>Encuentra talleres técnicos cerca de ti.</strong></span>
+      <a href="#">Ver directorio →</a>
+    </div>
+  </section>
+
+  <!-- S3 CONFIANZA -->
+  <section class="fp-section" id="s-trust">
+    <div class="trust-left">
+      <div class="section-eyebrow">Verificados y confiables</div>
+      <h2 class="section-title" style="color:var(--navy);font-size:clamp(24px,2.8vw,40px)">Tu servicio técnico<br>en un solo lugar</h2>
+      <p class="section-sub" style="text-align:left;margin-bottom:0">Todos los técnicos en MoyaOps son verificados, calificados por clientes reales y gestionan sus servicios de forma profesional.</p>
+      <div class="trust-features">
+        <div class="trust-feature"><div class="trust-icon">✅</div><div><h4>Técnicos verificados</h4><p>Cada taller pasa validación antes de aparecer en el directorio.</p></div></div>
+        <div class="trust-feature"><div class="trust-icon">📡</div><div><h4>Seguimiento en tiempo real</h4><p>Consulta el estado de tu reparación desde tu móvil con el código de orden.</p></div></div>
+        <div class="trust-feature"><div class="trust-icon">🛡️</div><div><h4>Garantía incluida</h4><p>Todos los servicios tienen garantía. Recibe tu factura digital al instante.</p></div></div>
+      </div>
+    </div>
+    <div class="trust-right">
+      <div class="shop-list">
+        {% for shop in shops %}
+        <div class="shop-card">
+          <div class="shop-avatar" style="background:{{ shop.avatar_color }}">{{ shop.avatar_emoji }}</div>
+          <div class="shop-info">
+            <h5>{{ shop.name }}</h5>
+            <p>📍 {{ shop.address }}</p>
+          </div>
+          <div class="shop-meta">
+            <div class="shop-rating">★ {{ shop.rating }} <span style="color:#94a3b8;font-weight:400">({{ shop.review_count }})</span></div>
+            <span class="shop-tag">{{ shop.services }}</span>
+          </div>
+        </div>
+        {% empty %}
+        <div class="shop-card">
+          <div class="shop-avatar" style="background:#fef9c3">🔧</div>
+          <div class="shop-info"><h5>TechRepair Madrid</h5><p>📍 Calle Gran Vía 42, Madrid</p></div>
+          <div class="shop-meta"><div class="shop-rating">★ 4.9 <span style="color:#94a3b8;font-weight:400">(234)</span></div><span class="shop-tag">Móviles · Tablets</span></div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- S4 SISTEMA -->
+  <section class="fp-section" id="s-system">
+    <div class="section-eyebrow">Para técnicos y tiendas</div>
+    <h2 class="section-title">El sistema que tu<br>taller necesita</h2>
+    <p class="section-sub">Deja los cuadernos y las hojas de cálculo. MoyaOps gestiona todo tu taller de forma profesional.</p>
+    <div class="features-grid">
+      <div class="feature-card"><span class="feature-card-icon">📋</span><h4>Órdenes de servicio</h4><p>Crea, asigna y sigue cada reparación. El cliente recibe actualizaciones automáticas por WhatsApp o email.</p></div>
+      <div class="feature-card"><span class="feature-card-icon">🛒</span><h4>Punto de venta</h4><p>Vende repuestos y accesorios con carrito, descuentos, IVA y facturas generadas al instante.</p></div>
+      <div class="feature-card"><span class="feature-card-icon">📊</span><h4>Reportes e informes</h4><p>Analiza rentabilidad por servicio y técnico. Exporta a Excel o PDF en un clic.</p></div>
+      <div class="feature-card"><span class="feature-card-icon">📦</span><h4>Inventario</h4><p>Control de stock de repuestos con alertas cuando el nivel baja del mínimo configurado.</p></div>
+      <div class="feature-card"><span class="feature-card-icon">🧾</span><h4>Facturación digital</h4><p>Facturas con código QR y envío por email o WhatsApp. Cumple con normativa fiscal.</p></div>
+      <div class="feature-card"><span class="feature-card-icon">👥</span><h4>Gestión de clientes</h4><p>Historial completo por cliente, datos de contacto y seguimiento de garantías activas.</p></div>
+    </div>
+  </section>
+
+  <!-- S5 REPARACIONES -->
+  <section class="fp-section" id="s-repairs">
+    <div class="section-eyebrow" style="color:var(--green)">Servicios más solicitados</div>
+    <h2 class="section-title" style="color:var(--navy)">Repara, no reemplaces</h2>
+    <p class="section-sub">Nuestros técnicos especializados devuelven la vida a tus dispositivos.</p>
+    <div class="repairs-grid">
+      <div class="repair-card"><div class="repair-bg bg-purple"></div><div class="play-btn">▶</div><div class="repair-overlay"><div class="repair-cat">📱 Vídeo · Tutorial</div><div class="repair-title">Cambio de pantalla iPhone 15 Pro — paso a paso</div><div class="repair-price">Desde €89 · 45 min</div></div></div>
+      <div class="repair-card"><div class="repair-bg bg-teal"></div><div class="repair-overlay"><div class="repair-cat">💻 Portátiles</div><div class="repair-title">Sustitución de batería MacBook</div><div class="repair-price">Desde €120</div></div></div>
+      <div class="repair-card"><div class="repair-bg bg-orange"></div><div class="repair-overlay"><div class="repair-cat">🎮 Consolas</div><div class="repair-title">PS5 — Limpieza y pasta térmica</div><div class="repair-price">Desde €55</div></div></div>
+      <div class="repair-card"><div class="repair-bg bg-green2"></div><div class="repair-overlay"><div class="repair-cat">📱 Samsung</div><div class="repair-title">Galaxy S24 — Puerto de carga</div><div class="repair-price">Desde €45</div></div></div>
+      <div class="repair-card"><div class="repair-bg bg-pink"></div><div class="repair-overlay"><div class="repair-cat">💾 Datos</div><div class="repair-title">Recuperación de datos SSD/HDD</div><div class="repair-price">Consultar precio</div></div></div>
+    </div>
+  </section>
+
+  <!-- S6 PRECIOS -->
+  <section class="fp-section" id="s-pricing">
+    <div class="section-eyebrow">Planes y precios</div>
+    <h2 class="section-title" style="color:var(--navy)">Elige el plan<br>para tu negocio</h2>
+    <p class="section-sub">Sin permanencia. Cancela cuando quieras. Soporte en español incluido.</p>
+    <div class="price-toggle-wrap">
+      <button class="price-toggle-btn active" id="btnMonthly" onclick="setPricing(false)">Mensual</button>
+      <button class="price-toggle-btn" id="btnAnnual" onclick="setPricing(true)">
+        Anual <span class="discount-badge">−14%</span>
+      </button>
+    </div>
+    <div class="pricing-grid">
+      {% for plan in pricing_plans %}
+      <div class="price-card{% if plan.is_featured %} featured{% endif %}{% if plan.is_coming_soon %} coming-soon{% endif %}">
+        {% if plan.is_featured %}<div class="price-badge">⭐ Más popular</div>{% endif %}
+        {% if plan.badge and not plan.is_featured %}<div class="price-badge">{{ plan.badge }}</div>{% endif %}
+        <div class="price-plan">{{ plan.name }}</div>
+        {% if plan.is_coming_soon %}
+          <div style="margin-bottom:10px"><span class="price-soon-badge">🚀 Próximo</span></div>
+          <div class="price-amount" style="font-size:22px;letter-spacing:-1px;color:#94a3b8;margin-bottom:6px">Muy pronto</div>
+          <div class="price-period" style="margin-bottom:14px">precio por confirmar</div>
+          <p class="price-soon-text">Trabajamos en un plan para grandes empresas — sucursales múltiples, técnicos ilimitados, API y SLA dedicado.<br><br>Contáctanos para acceso anticipado.</p>
+          <button class="price-btn" onclick="document.getElementById('chatBubble').click()">Notificarme →</button>
+        {% else %}
+          <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="{{ plan.monthly_price_display }}" data-annual="{{ plan.annual_monthly_display }}">{{ plan.monthly_price_display }}</span></div>
+          <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
+          {% if plan.annual_total %}
+          <div class="price-annual-note p-note">€{{ plan.annual_total }} facturado anualmente</div>
+          {% endif %}
+          <ul class="price-features">
+            {% for feat in plan.features.all %}
+            <li>{{ feat.text }}</li>
+            {% endfor %}
+          </ul>
+          <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">{% if plan.is_featured %}Comenzar ahora →{% else %}Empezar ahora{% endif %}</button>
+        {% endif %}
+      </div>
+      {% empty %}
+      <div class="price-card">
+        <div class="price-plan">Básico</div>
+        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="15" data-annual="12.90">15</span></div>
+        <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
+        <div class="price-annual-note p-note">€154.80 facturado anualmente</div>
+        <ul class="price-features"><li>Hasta 60 órdenes/mes</li><li>1 técnico</li><li>Facturas básicas</li><li>App móvil incluida</li><li>Soporte por email</li></ul>
+        <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Empezar ahora</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">⭐ Más popular</div>
+        <div class="price-plan">Profesional</div>
+        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="29" data-annual="24.94">29</span></div>
+        <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
+        <div class="price-annual-note p-note">€299.30 facturado anualmente</div>
+        <ul class="price-features"><li>Órdenes ilimitadas</li><li>Hasta 5 técnicos</li><li>Facturación completa + QR</li><li>Inventario y POS</li><li>Reportes avanzados</li><li>WhatsApp integrado</li><li>Soporte prioritario</li></ul>
+        <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Comenzar ahora →</button>
+      </div>
+      <div class="price-card coming-soon">
+        <div class="price-plan">Empresa</div>
+        <div style="margin-bottom:10px"><span class="price-soon-badge">🚀 Próximo</span></div>
+        <div class="price-amount" style="font-size:22px;letter-spacing:-1px;color:#94a3b8;margin-bottom:6px">Muy pronto</div>
+        <div class="price-period" style="margin-bottom:14px">precio por confirmar</div>
+        <p class="price-soon-text">Trabajamos en un plan para grandes empresas. Contáctanos para acceso anticipado.</p>
+        <button class="price-btn" onclick="document.getElementById('chatBubble').click()">Notificarme →</button>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- S7 PAÍSES -->
+  <section class="fp-section" id="s-countries">
+    <div class="countries-left">
+      <div class="section-eyebrow" style="text-align:left">Presencia global</div>
+      <h2 class="section-title" style="text-align:left;font-size:clamp(24px,3vw,42px)">Estamos donde<br>están tus clientes</h2>
+      <p class="section-sub" style="text-align:left">MoyaOps opera en España y Latinoamérica. Tu taller conecta con la red global de técnicos verificados.</p>
+      <div class="counters">
+        <div><div class="counter-num"><span class="c-val" data-target="{{ cfg.countries_count }}">0</span><span class="c-suffix">+</span></div><div class="counter-label">Países</div></div>
+        <div><div class="counter-num"><span class="c-val" data-target="{{ cfg.technicians_count }}">0</span><span class="c-suffix">+</span></div><div class="counter-label">Técnicos</div></div>
+        <div><div class="counter-num"><span class="c-val" data-target="{{ cfg.orders_count }}">0</span><span class="c-suffix">k+</span></div><div class="counter-label">Órdenes</div></div>
+      </div>
+      <div class="country-tags">
+        <span class="country-tag on">🇪🇸 España</span><span class="country-tag on">🇲🇽 México</span>
+        <span class="country-tag on">🇨🇴 Colombia</span><span class="country-tag on">🇦🇷 Argentina</span>
+        <span class="country-tag on">🇨🇱 Chile</span><span class="country-tag on">🇵🇪 Perú</span>
+        <span class="country-tag">🇻🇪 Venezuela</span><span class="country-tag">🇪🇨 Ecuador</span>
+        <span class="country-tag">🇧🇴 Bolivia</span><span class="country-tag">🇺🇾 Uruguay</span>
+        <span class="country-tag">🇵🇦 Panamá</span><span class="country-tag">🇩🇴 Rep. Dominicana</span>
+      </div>
+    </div>
+    <div class="map-wrap">
+      <svg class="map-svg" viewBox="0 0 300 430" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M95 28 L130 22 L148 30 L152 44 L140 52 L118 56 L98 48 L90 36 Z" fill="rgba(22,163,74,.28)" stroke="rgba(22,163,74,.6)" stroke-width="1.4"/>
+        <circle cx="120" cy="38" r="5.5" fill="#22c55e"/><circle cx="120" cy="38" r="11" fill="rgba(34,197,94,.22)"/>
+        <path d="M62 140 L100 134 L118 142 L120 160 L108 170 L88 172 L68 164 L58 150 Z" fill="rgba(22,163,74,.22)" stroke="rgba(22,163,74,.4)" stroke-width="1.2"/>
+        <circle cx="89" cy="153" r="5" fill="#22c55e"/><circle cx="89" cy="153" r="10" fill="rgba(34,197,94,.18)"/>
+        <path d="M100 200 L126 196 L134 210 L128 226 L108 230 L96 220 L94 208 Z" fill="rgba(22,163,74,.22)" stroke="rgba(22,163,74,.4)" stroke-width="1.2"/>
+        <circle cx="114" cy="213" r="4.5" fill="#22c55e"/>
+        <path d="M130 192 L162 188 L172 202 L164 214 L140 216 L128 206 Z" fill="rgba(22,163,74,.14)" stroke="rgba(22,163,74,.28)" stroke-width="1"/>
+        <circle cx="150" cy="202" r="3" fill="#4ade80"/>
+        <path d="M88 240 L116 236 L122 256 L118 280 L98 284 L82 270 L80 252 Z" fill="rgba(22,163,74,.22)" stroke="rgba(22,163,74,.4)" stroke-width="1.2"/>
+        <circle cx="101" cy="260" r="4.5" fill="#22c55e"/>
+        <path d="M134 216 L196 198 L226 216 L240 250 L238 288 L218 310 L188 318 L158 306 L138 280 L128 252 Z" fill="rgba(22,163,74,.09)" stroke="rgba(22,163,74,.22)" stroke-width="1"/>
+        <circle cx="184" cy="260" r="3" fill="#4ade80"/>
+        <path d="M118 284 L148 280 L154 298 L148 314 L124 318 L112 304 Z" fill="rgba(22,163,74,.14)" stroke="rgba(22,163,74,.28)" stroke-width="1"/>
+        <circle cx="133" cy="299" r="3" fill="#4ade80"/>
+        <path d="M96 292 L108 288 L110 332 L104 360 L96 364 L90 354 L88 318 Z" fill="rgba(22,163,74,.22)" stroke="rgba(22,163,74,.4)" stroke-width="1.2"/>
+        <circle cx="99" cy="322" r="4" fill="#22c55e"/>
+        <path d="M110 308 L156 304 L164 332 L160 362 L148 376 L126 378 L112 362 L108 332 Z" fill="rgba(22,163,74,.22)" stroke="rgba(22,163,74,.4)" stroke-width="1.2"/>
+        <circle cx="136" cy="342" r="4.5" fill="#22c55e"/>
+        <path d="M154 306 L172 302 L176 320 L164 328 L152 320 Z" fill="rgba(22,163,74,.18)" stroke="rgba(22,163,74,.35)" stroke-width="1"/>
+        <circle cx="164" cy="314" r="3" fill="#4ade80"/>
+        <path d="M84 224 L104 220 L108 236 L96 242 L80 238 Z" fill="rgba(22,163,74,.14)" stroke="rgba(22,163,74,.28)" stroke-width="1"/>
+        <circle cx="94" cy="231" r="2.5" fill="#4ade80"/>
+        <path d="M112 182 L124 180 L126 188 L116 190 Z" fill="rgba(22,163,74,.14)" stroke="rgba(22,163,74,.28)" stroke-width="1"/>
+        <circle cx="119" cy="185" r="2.5" fill="#4ade80"/>
+        <circle cx="178" cy="166" r="5.5" fill="rgba(22,163,74,.18)" stroke="rgba(22,163,74,.35)"/>
+        <circle cx="178" cy="166" r="2.5" fill="#4ade80"/>
+        <path d="M120 49 Q190 102 89 145" stroke="rgba(34,197,94,.18)" stroke-width="1.2" stroke-dasharray="4 5"/>
+        <path d="M120 49 Q78 122 114 196" stroke="rgba(34,197,94,.12)" stroke-width="1" stroke-dasharray="4 5"/>
+      </svg>
+    </div>
+    <div class="footer-bar">
+      <div class="footer-logo">
+        <div style="width:26px;height:26px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:white">M</div>
+        Moya<span>Ops</span>
+      </div>
+      <ul class="footer-links">
+        <li><a href="#" onclick="goTo(3);return false">Sistema</a></li>
+        <li><a href="#" onclick="goTo(2);return false">Servicios</a></li>
+        <li><a href="#" onclick="goTo(5);return false">Precios</a></li>
+        <li><a href="#">Privacidad</a></li>
+        <li><a href="#">Términos</a></li>
+        <li><a href="{{ cfg.app_url }}" target="_blank" style="color:var(--green-light)">Entrar a la app</a></li>
+      </ul>
+      <div class="footer-social">
+        <a href="#" class="social-btn" title="Instagram">📷</a>
+        <a href="#" class="social-btn" title="TikTok">🎵</a>
+        <a href="#" class="social-btn" title="YouTube">▶️</a>
+        <a href="#" class="social-btn" title="WhatsApp">💬</a>
+      </div>
+    </div>
+  </section>
+
+</div><!-- #fullpage -->
+
+<!-- CHATBOT -->
+<button id="chatBubble" class="chat-fab-bubble" onclick="toggleChat()">👩‍💻</button>
+<div id="chatPanel" class="chat-fab-panel">
+  <div class="chat-panel-header">
+    <div class="chat-avatar">🤖</div>
+    <div><h4>Asistente MoyaOps</h4><p>● En línea · Responde en minutos</p></div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMsgs">
+    <div class="chat-msg bot">¡Hola! 👋 Soy el asistente de MoyaOps. ¿En qué puedo ayudarte?</div>
+    <div class="chat-msg bot">Puedo ayudarte a encontrar un técnico, conocer nuestros planes o conectarte con soporte.</div>
+  </div>
+  <div class="chat-quick" id="chatQuick">
+    {% for entry in chatbot_entries %}
+    <button class="chat-qr" onclick="sendQ('{{ entry.label }}')">{{ entry.emoji }} {{ entry.label }}</button>
+    {% empty %}
+    <button class="chat-qr" onclick="sendQ('Buscar técnico')">🔍 Buscar técnico</button>
+    <button class="chat-qr" onclick="sendQ('Mi orden')">📦 Mi orden</button>
+    <button class="chat-qr" onclick="sendQ('Ver planes')">💳 Ver planes</button>
+    <button class="chat-qr" onclick="sendQ('Soy técnico')">🔧 Soy técnico</button>
+    <button class="chat-qr" onclick="sendQ('Garantía')">🛡️ Garantía</button>
+    <button class="chat-qr" onclick="sendQ('Métodos de pago')">💰 Pago</button>
+    <button class="chat-qr" onclick="sendQ('A domicilio')">🚗 Domicilio</button>
+    <button class="chat-qr" onclick="sendQ('Soporte')">🆘 Soporte</button>
+    {% endfor %}
+  </div>
+  <div class="chat-input-row">
+    <input id="chatIn" type="text" placeholder="Escribe tu mensaje..." onkeydown="if(event.key==='Enter')sendMsg()">
+    <button class="chat-send" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+
+<!-- REVIEWS WIDGET -->
+<div id="reviews-widget">
+  <div id="reviews-tab" onclick="toggleReviews()">★ Reseñas</div>
+  <div id="reviews-panel">
+    <div class="rev-inner">
+      <div class="rev-head">
+        <h4>Opiniones reales</h4>
+        <span>● En vivo</span>
+      </div>
+      {% for r in reviews %}
+      <div class="rev-item">
+        <div class="rev-top">
+          <div class="rev-av" style="background:{{ r.avatar_color }}">{{ r.initials }}</div>
+          <div>
+            <div class="rev-name">{{ r.author_name }}</div>
+            <div class="rev-stars">{{ r.stars_html }}</div>
+          </div>
+        </div>
+        <p class="rev-text">{{ r.text }}</p>
+        {% if r.shop_name %}<span class="rev-shop">📍 {{ r.shop_name }}</span>{% endif %}
+      </div>
+      {% empty %}
+      <div class="rev-item">
+        <div class="rev-top"><div class="rev-av" style="background:#22c55e">CM</div><div><div class="rev-name">Carlos Méndez</div><div class="rev-stars">★★★★★</div></div></div>
+        <p class="rev-text">Excelente servicio, me atendieron en menos de una hora.</p>
+        <span class="rev-shop">📍 TechRepair Madrid</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATOS DESDE DJANGO ──
+const CHATBOT_DATA = {{ chatbot_json|safe }};
+
+// ── FULLPAGE HORIZONTAL ──
+const fp       = document.getElementById('fullpage');
+const sections = document.querySelectorAll('.fp-section');
+const dots     = document.querySelectorAll('.fp-dot');
+const navbar   = document.getElementById('navbar');
+const fpNav    = document.getElementById('fp-nav');
+const darkSecs  = new Set([0, 6]);
+const lightSecs = new Set([1, 2, 3, 4, 5]);
+
+let cur = 0, busy = false, autoTimer;
+let mobile = window.innerWidth <= 900;
+
+function goTo(n) {
+  if (mobile) { sections[n].scrollIntoView({behavior:'smooth'}); return; }
+  n = Math.max(0, Math.min(n, sections.length - 1));
+  if (n === cur || busy) return;
+  busy = true; cur = n;
+  fp.style.transform = `translateX(-${cur * 100}vw)`;
+  dots.forEach((d,i) => d.classList.toggle('active', i === cur));
+  navbar.className = lightSecs.has(cur) ? 'light' : cur === 0 ? '' : 'scrolled';
+  fpNav.className  = darkSecs.has(cur) ? 'dark' : '';
+  if (cur === 6) animCounters();
+  setTimeout(() => busy = false, 750);
+  resetAuto();
+}
+
+let wt;
+window.addEventListener('wheel', e => {
+  if (mobile) return;
+  clearTimeout(wt);
+  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+  wt = setTimeout(() => { d > 30 ? goTo(cur+1) : d < -30 ? goTo(cur-1) : null; }, 55);
+}, {passive:true});
+
+window.addEventListener('keydown', e => {
+  if (mobile) return;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown') goTo(cur+1);
+  if (e.key==='ArrowLeft' ||e.key==='ArrowUp'  ||e.key==='PageUp')   goTo(cur-1);
+});
+
+let tx = 0;
+window.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, {passive:true});
+window.addEventListener('touchend',   e => {
+  if (mobile) return;
+  const d = tx - e.changedTouches[0].clientX;
+  if (Math.abs(d) > 55) goTo(cur + (d > 0 ? 1 : -1));
+});
+
+window.addEventListener('resize', () => {
+  mobile = window.innerWidth <= 900;
+  if (!mobile) fp.style.transform = `translateX(-${cur * 100}vw)`;
+});
+
+// ── CAROUSEL HERO ──
+const slides = ['cs0','cs1','cs2'].map(id => document.getElementById(id));
+const pos = ['pos-top','pos-center','pos-bottom'];
+let ci = 0;
+setInterval(() => {
+  ci = (ci+1) % 3;
+  slides.forEach((s,i) => { s.className = 'carousel-slide ' + pos[(i-ci+3)%3]; });
+}, 2800);
+
+// ── COUNTERS ──
+let counted = false;
+function animCounters() {
+  if (counted) return; counted = true;
+  document.querySelectorAll('.c-val').forEach(el => {
+    const t = +el.dataset.target, steps = 48, inc = t/steps;
+    let v = 0;
+    const tmr = setInterval(() => {
+      v = Math.min(v+inc, t);
+      el.textContent = Math.round(v);
+      if (v >= t) clearInterval(tmr);
+    }, 1400/steps);
+  });
+}
+
+// ── PRICING TOGGLE ──
+function setPricing(annual) {
+  document.getElementById('btnMonthly').classList.toggle('active', !annual);
+  document.getElementById('btnAnnual').classList.toggle('active', annual);
+  document.querySelectorAll('.p-num').forEach(el => {
+    el.textContent = annual ? el.dataset.annual : el.dataset.monthly;
+  });
+  document.querySelectorAll('.p-period').forEach(el => {
+    el.textContent = annual ? el.dataset.annual : el.dataset.monthly;
+  });
+  document.querySelectorAll('.p-note').forEach(el => {
+    el.style.display = annual ? 'block' : 'none';
+  });
+}
+
+// ── CHATBOT ──
+function toggleChat() { document.getElementById('chatPanel').classList.toggle('open'); }
+function sendMsg() {
+  const inp = document.getElementById('chatIn');
+  const t = inp.value.trim(); if (!t) return;
+  inp.value = ''; addMsg(t,'user');
+  setTimeout(() => addMsg(botAnswer(t),'bot'), 850);
+}
+function sendQ(t) { addMsg(t,'user'); setTimeout(() => addMsg(botAnswer(t),'bot'), 850); }
+function addMsg(t, role) {
+  const box = document.getElementById('chatMsgs');
+  const d = document.createElement('div');
+  d.className = 'chat-msg ' + role; d.textContent = t;
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+function botAnswer(t) {
+  const q = t.toLowerCase();
+  // Exact label match
+  const exact = CHATBOT_DATA.find(e => e.label.toLowerCase() === q);
+  if (exact) return exact.response;
+  // Keyword search
+  for (const entry of CHATBOT_DATA) {
+    if (entry.keywords && entry.keywords.some(k => q.includes(k.toLowerCase()))) return entry.response;
+  }
+  return '¡Gracias por escribirnos! 👋 Un agente te responderá pronto. Para urgencias contáctanos por WhatsApp. 📞';
+}
+
+// ── REVIEWS WIDGET ──
+let revOpen = false;
+function toggleReviews() {
+  revOpen = !revOpen;
+  document.getElementById('reviews-widget').classList.toggle('open', revOpen);
+}
+
+// ── AUTO-ADVANCE SECTIONS ──
+function resetAuto() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => {
+    if (!mobile) goTo(cur >= sections.length - 1 ? 0 : cur + 1);
+  }, 5500);
+}
+resetAuto();
+</script>
+</body>
+</html>

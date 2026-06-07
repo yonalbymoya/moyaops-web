@@ -1,0 +1,18 @@
+[Unit]
+Description=MoyaOps Website — Django/Gunicorn
+After=postgres.service
+
+[Container]
+Image=localhost/moyaops-web:latest
+ContainerName=moyaops_web
+Network=app.network:alias=moyaopsapp
+PublishPort=8001:8000
+Volume=moyaops-static:/app/staticfiles:Z
+EnvironmentFile=%h/.env.moyaops
+
+[Service]
+Restart=always
+TimeoutStartSec=120
+
+[Install]
+WantedBy=default.target
