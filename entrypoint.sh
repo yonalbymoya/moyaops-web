@@ -7,6 +7,9 @@ until python manage.py migrate --noinput 2>/dev/null; do
     sleep 2
 done
 
+echo "→ Cargando datos iniciales..."
+python manage.py seed_data
+
 echo "→ Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput -v0
 

@@ -285,17 +285,18 @@
 
     /* ══ REVIEWS WIDGET ══ */
     #reviews-widget {
-      position: fixed; right: 0; top: 50%; transform: translateY(-50%);
-      z-index: 997; display: flex; align-items: stretch;
-      max-height: calc(100vh - 40px);
+      position: fixed; right: 0; bottom: 148px;
+      z-index: 997; display: flex; flex-direction: row-reverse; align-items: flex-end;
     }
     #reviews-tab {
-      writing-mode: vertical-lr; transform: rotate(180deg);
+      writing-mode: horizontal-tb; transform: none;
       background: var(--green); color: white;
-      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-      padding: 14px 8px; border-radius: 10px 0 0 10px;
+      font-size: 14px; font-weight: 700; letter-spacing: .3px;
+      padding: 14px 20px; border-radius: 14px 0 0 14px;
       cursor: pointer; user-select: none; transition: background .2s;
-      display: flex; align-items: center; gap: 5px;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: -4px 4px 18px rgba(22,163,74,.38);
+      white-space: nowrap;
     }
     #reviews-tab:hover { background: var(--green-dark); }
     #reviews-panel {
@@ -578,7 +579,11 @@
           <p class="price-soon-text">Trabajamos en un plan para grandes empresas — sucursales múltiples, técnicos ilimitados, API y SLA dedicado.<br><br>Contáctanos para acceso anticipado.</p>
           <button class="price-btn" onclick="document.getElementById('chatBubble').click()">Notificarme →</button>
         {% else %}
+          {% if plan.monthly_price_display == "0" or plan.monthly_price_display == "0.00" %}
+          <div class="price-amount" style="font-size:2.2rem;font-weight:800;color:var(--green);letter-spacing:-1px;margin-bottom:4px">Gratis</div>
+          {% else %}
           <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="{{ plan.monthly_price_display }}" data-annual="{{ plan.annual_monthly_display }}">{{ plan.monthly_price_display }}</span></div>
+          {% endif %}
           <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
           {% if plan.annual_total %}
           <div class="price-annual-note p-note">€{{ plan.annual_total }} facturado anualmente</div>
@@ -595,9 +600,8 @@
       <div class="price-card">
         <div class="price-badge">🎁 14 días gratis</div>
         <div class="price-plan">Básico</div>
-        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="9" data-annual="7.90">9</span></div>
-        <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
-        <div class="price-annual-note p-note">€94.80 facturado anualmente</div>
+        <div class="price-amount" style="font-size:2.2rem;font-weight:800;color:var(--green);letter-spacing:-1px;margin-bottom:4px">Gratis</div>
+        <div class="price-period p-period" data-monthly="para siempre · 1 tienda" data-annual="para siempre · 1 tienda">para siempre · 1 tienda</div>
         <ul class="price-features"><li>14 días de prueba gratis</li><li>Acceso a todas las funciones</li><li>1 tienda</li><li>Empleados ilimitados</li><li>App móvil incluida</li><li>Soporte incluido</li></ul>
         <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Empezar gratis →</button>
       </div>
