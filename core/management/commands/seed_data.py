@@ -47,7 +47,7 @@ class Command(BaseCommand):
         # Pricing
         basico, _ = PricingPlan.objects.update_or_create(
             name="Básico",
-            defaults={"monthly_price": "0.00", "annual_monthly_price": "0.00", "annual_total": "", "badge": "🎁 14 días gratis", "order": 0}
+            defaults={"monthly_price": "0.00", "annual_monthly_price": "0.00", "annual_total": None, "badge": "🎁 14 días gratis", "order": 0}
         )
         basico.features.all().delete()
         for i, feat in enumerate(["14 días de prueba gratis", "Acceso a todas las funciones", "1 tienda", "Empleados ilimitados", "App móvil incluida", "Soporte incluido"]):
