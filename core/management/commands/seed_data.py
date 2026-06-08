@@ -45,16 +45,23 @@ class Command(BaseCommand):
                 ChatbotEntry.objects.create(emoji=emoji, label=label, trigger_keywords=keywords, response=response, order=i)
 
         # Pricing
-        if not PricingPlan.objects.exists():
-            basico = PricingPlan.objects.create(name="Básico", monthly_price="15.00", annual_monthly_price="12.90", annual_total="154.80", order=0)
-            for i, feat in enumerate(["Hasta 60 órdenes/mes", "1 técnico", "Facturas básicas", "App móvil incluida", "Soporte por email"]):
-                PricingFeature.objects.create(plan=basico, text=feat, order=i)
+        basico, _ = PricingPlan.objects.update_or_create(
+            name="Básico",
+            defaults={"monthly_price": "9.00", "annual_monthly_price": "7.90", "annual_total": "94.80", "badge": "🎁 14 días gratis", "order": 0}
+        )
+        basico.features.all().delete()
+        for i, feat in enumerate(["14 días de prueba gratis", "Acceso a todas las funciones", "1 tienda", "Empleados ilimitados", "App móvil incluida", "Soporte incluido"]):
+            PricingFeature.objects.create(plan=basico, text=feat, order=i)
 
-            pro = PricingPlan.objects.create(name="Profesional", monthly_price="29.00", annual_monthly_price="24.94", annual_total="299.30", is_featured=True, badge="⭐ Más popular", order=1)
-            for i, feat in enumerate(["Órdenes ilimitadas", "Hasta 5 técnicos", "Facturación completa + QR", "Inventario y POS", "Reportes avanzados", "WhatsApp integrado", "Soporte prioritario"]):
-                PricingFeature.objects.create(plan=pro, text=feat, order=i)
+        pro, _ = PricingPlan.objects.update_or_create(
+            name="Profesional",
+            defaults={"monthly_price": "15.00", "annual_monthly_price": "12.90", "annual_total": "154.80", "is_featured": True, "badge": "⭐ Más popular", "order": 1}
+        )
+        pro.features.all().delete()
+        for i, feat in enumerate(["Órdenes ilimitadas", "Tiendas ilimitadas", "Facturación completa + QR", "Inventario y POS", "Reportes avanzados", "WhatsApp integrado", "Soporte prioritario"]):
+            PricingFeature.objects.create(plan=pro, text=feat, order=i)
 
-            PricingPlan.objects.create(name="Empresa", is_coming_soon=True, order=2)
+        PricingPlan.objects.update_or_create(name="Empresa", defaults={"is_coming_soon": True, "order": 2})
 
         # Shops
         if not ShopCard.objects.exists():

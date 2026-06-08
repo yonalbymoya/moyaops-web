@@ -292,10 +292,10 @@
     #reviews-tab {
       writing-mode: vertical-lr; transform: rotate(180deg);
       background: var(--green); color: white;
-      font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-      padding: 20px 10px; border-radius: 10px 0 0 10px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 14px 8px; border-radius: 10px 0 0 10px;
       cursor: pointer; user-select: none; transition: background .2s;
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 5px;
     }
     #reviews-tab:hover { background: var(--green-dark); }
     #reviews-panel {
@@ -304,19 +304,19 @@
       box-shadow: -4px 0 24px rgba(0,0,0,.14);
       transition: width .35s cubic-bezier(.34,1.25,.64,1);
     }
-    #reviews-widget.open #reviews-panel { width: 262px; overflow-y: auto; max-height: calc(100vh - 40px); }
-    .rev-inner { width: 262px; padding: 16px; }
-    .rev-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-    .rev-head h4 { font-size:13px; font-weight:700; color:var(--navy); }
-    .rev-head span { font-size:10px; color:var(--green-dark); background:rgba(22,163,74,.1); padding:2px 7px; border-radius:100px; font-weight:600; }
-    .rev-item { display:block; border-bottom:1px solid var(--gray-border); padding-bottom:10px; margin-bottom:10px; }
+    #reviews-widget.open #reviews-panel { width: 210px; overflow-y: auto; max-height: calc(100vh - 80px); }
+    .rev-inner { width: 210px; padding: 12px; }
+    .rev-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .rev-head h4 { font-size:12px; font-weight:700; color:var(--navy); }
+    .rev-head span { font-size:9px; color:var(--green-dark); background:rgba(22,163,74,.1); padding:2px 6px; border-radius:100px; font-weight:600; }
+    .rev-item { display:block; border-bottom:1px solid var(--gray-border); padding-bottom:8px; margin-bottom:8px; }
     .rev-item:last-child { border-bottom:none; padding-bottom:0; margin-bottom:0; }
-    .rev-top { display:flex; align-items:center; gap:9px; margin-bottom:7px; }
-    .rev-av { width:34px;height:34px; border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:12px;font-weight:700;color:white;flex-shrink:0; }
-    .rev-name { font-size:12px; font-weight:700; color:var(--navy); }
-    .rev-stars { font-size:11px; color:#f59e0b; }
-    .rev-text { font-size:12px; color:var(--gray-text); line-height:1.5; margin-bottom:7px; }
-    .rev-shop { display:inline-flex; align-items:center; gap:4px; background:rgba(22,163,74,.1); color:var(--green-dark); font-size:10px; font-weight:600; padding:2px 8px; border-radius:100px; }
+    .rev-top { display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+    .rev-av { width:28px;height:28px; border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:10px;font-weight:700;color:white;flex-shrink:0; }
+    .rev-name { font-size:11px; font-weight:700; color:var(--navy); }
+    .rev-stars { font-size:10px; color:#f59e0b; }
+    .rev-text { font-size:11px; color:var(--gray-text); line-height:1.45; margin-bottom:5px; }
+    .rev-shop { display:inline-flex; align-items:center; gap:4px; background:rgba(22,163,74,.1); color:var(--green-dark); font-size:9px; font-weight:600; padding:2px 7px; border-radius:100px; }
 
     /* ══ RESPONSIVE ══ */
     @media(max-width:900px){
@@ -354,6 +354,7 @@
 <nav id="navbar">
   <a href="#" onclick="goTo(0);return false" class="nav-logo">
     <img src="{% static 'core/logo.png' %}" alt="MoyaOps" class="nav-logo-img">
+    <span class="nav-logo-text">Moya<span>Ops</span></span>
   </a>
   <ul class="nav-links">
     <li><a onclick="goTo(3)">Sistema de gestión</a></li>
@@ -592,28 +593,29 @@
       </div>
       {% empty %}
       <div class="price-card">
+        <div class="price-badge">🎁 14 días gratis</div>
         <div class="price-plan">Básico</div>
-        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="15" data-annual="12.90">15</span></div>
+        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="9" data-annual="7.90">9</span></div>
         <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
-        <div class="price-annual-note p-note">€154.80 facturado anualmente</div>
-        <ul class="price-features"><li>Hasta 60 órdenes/mes</li><li>1 técnico</li><li>Facturas básicas</li><li>App móvil incluida</li><li>Soporte por email</li></ul>
-        <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Empezar ahora</button>
+        <div class="price-annual-note p-note">€94.80 facturado anualmente</div>
+        <ul class="price-features"><li>14 días de prueba gratis</li><li>Acceso a todas las funciones</li><li>1 tienda</li><li>Empleados ilimitados</li><li>App móvil incluida</li><li>Soporte incluido</li></ul>
+        <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Empezar gratis →</button>
       </div>
       <div class="price-card featured">
         <div class="price-badge">⭐ Más popular</div>
         <div class="price-plan">Profesional</div>
-        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="29" data-annual="24.94">29</span></div>
+        <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="15" data-annual="12.90">15</span></div>
         <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
-        <div class="price-annual-note p-note">€299.30 facturado anualmente</div>
-        <ul class="price-features"><li>Órdenes ilimitadas</li><li>Hasta 5 técnicos</li><li>Facturación completa + QR</li><li>Inventario y POS</li><li>Reportes avanzados</li><li>WhatsApp integrado</li><li>Soporte prioritario</li></ul>
+        <div class="price-annual-note p-note">€154.80 facturado anualmente</div>
+        <ul class="price-features"><li>Órdenes ilimitadas</li><li>Tiendas ilimitadas</li><li>Facturación completa + QR</li><li>Inventario y POS</li><li>Reportes avanzados</li><li>WhatsApp integrado</li><li>Soporte prioritario</li></ul>
         <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Comenzar ahora →</button>
       </div>
       <div class="price-card coming-soon">
         <div class="price-plan">Empresa</div>
         <div style="margin-bottom:10px"><span class="price-soon-badge">🚀 Próximo</span></div>
-        <div class="price-amount" style="font-size:22px;letter-spacing:-1px;color:#94a3b8;margin-bottom:6px">Muy pronto</div>
+        <div class="price-amount" style="font-size:22px;letter-spacing:-1px;color:#94a3b8;margin-bottom:6px">En veremos</div>
         <div class="price-period" style="margin-bottom:14px">precio por confirmar</div>
-        <p class="price-soon-text">Trabajamos en un plan para grandes empresas. Contáctanos para acceso anticipado.</p>
+        <p class="price-soon-text">Trabajamos en un plan para grandes empresas — sucursales múltiples, técnicos ilimitados y SLA dedicado. Pronto.</p>
         <button class="price-btn" onclick="document.getElementById('chatBubble').click()">Notificarme →</button>
       </div>
       {% endfor %}
