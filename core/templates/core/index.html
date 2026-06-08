@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -47,21 +48,6 @@
     #navbar.light .nav-links a:hover { color: var(--navy); }
     .nav-cta { background: var(--green) !important; color: white !important; padding: 9px 18px; border-radius: 9px; font-weight: 700 !important; }
     .nav-cta:hover { background: var(--green-dark) !important; color: white !important; }
-
-    /* ── GLOBAL SEARCH BAR ── */
-    #global-search {
-      position: fixed; top: 78px; left: 50%; transform: translateX(-50%);
-      z-index: 999; display: flex; align-items: center; gap: 10px;
-      background: rgba(255,255,255,.97); backdrop-filter: blur(14px);
-      border: 1.5px solid var(--gray-border); border-radius: 14px;
-      padding: 11px 20px; width: 480px; max-width: calc(100vw - 48px);
-      box-shadow: 0 4px 24px rgba(0,0,0,.13); cursor: text;
-      transition: box-shadow .2s, border-color .2s;
-    }
-    #global-search:focus-within { border-color: var(--green); box-shadow: 0 4px 24px rgba(22,163,74,.2); }
-    #global-search .gs-icon { font-size: 17px; flex-shrink: 0; opacity: .45; }
-    #global-search input { border:none; outline:none; background:transparent; font-size:15px; color:var(--navy); font-family:var(--font); width:100%; }
-    #global-search input::placeholder { color:#94a3b8; }
 
     /* ── BOTTOM DOTS NAV ── */
     #fp-nav {
@@ -142,8 +128,11 @@
     .mock-bar.hi { background:var(--green); }
 
     /* ══ S2 BUSCADOR ══ */
-    #s-search { background:var(--gray-bg); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:140px 48px 40px; text-align:center; }
+    #s-search { background:var(--gray-bg); display:flex; flex-direction:column; justify-content:space-between; padding:88px 48px 80px; }
     #s-search .section-title { color:var(--navy); }
+    .s-search-header { display:flex; flex-direction:column; align-items:center; text-align:center; width:100%; }
+    .s-search-body { width:100%; display:flex; justify-content:center; }
+    .s-search-bottom { width:100%; display:flex; justify-content:center; }
     .search-bar { display:flex; align-items:center; background:white; border:2px solid var(--gray-border); border-radius:14px; padding:5px 5px 5px 18px; width:100%; max-width:600px; box-shadow:0 4px 20px rgba(0,0,0,.06); margin-bottom:32px; transition:border-color .2s,box-shadow .2s; }
     .search-bar:focus-within { border-color:var(--green); box-shadow:0 4px 20px rgba(22,163,74,.14); }
     .search-bar input { flex:1; border:none; outline:none; font-size:14px; color:var(--navy); background:transparent; font-family:var(--font); }
@@ -258,6 +247,10 @@
     .footer-bar { position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,.32); border-top:1px solid rgba(255,255,255,.07); padding:14px 48px; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
     .footer-logo { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:800; color:white; }
     .footer-logo span { color:var(--green-light); }
+    .nav-logo-img { height:36px; border-radius:8px; background:white; padding:2px 4px; object-fit:contain; display:block; }
+    .footer-logo-img { height:32px; border-radius:6px; background:white; padding:2px 4px; object-fit:contain; }
+    .footer-copyright { width:100%; font-size:11px; color:rgba(255,255,255,.35); text-align:center; padding-top:10px; border-top:1px solid rgba(255,255,255,.07); letter-spacing:.3px; }
+    .footer-copyright strong { color:rgba(255,255,255,.55); font-weight:600; }
     .footer-links { display:flex; gap:18px; list-style:none; }
     .footer-links a { font-size:12px; color:rgba(255,255,255,.5); text-decoration:none; transition:color .2s; }
     .footer-links a:hover { color:white; }
@@ -339,7 +332,8 @@
       .hero-badge,.hero-actions,.hero-stats { justify-content:center; }
       .hero-badge { margin:0 auto 20px; }
       .hero-visual { width:100%;max-width:100%;height:260px; }
-      #s-search,#s-system,#s-repairs,#s-pricing { padding:160px 20px 60px; }
+      #s-search { padding:120px 20px 80px; }
+      #s-system,#s-repairs,#s-pricing { padding:160px 20px 60px; }
       #s-trust { flex-direction:column; padding:160px 20px 40px; }
       .features-grid { grid-template-columns:1fr 1fr; }
       .repairs-grid { grid-template-columns:1fr 1fr; }
@@ -348,7 +342,6 @@
       #s-countries { flex-direction:column; padding:160px 20px 90px; }
       .countries-left { flex:none; width:100%; }
       .footer-bar { padding:12px 20px; }
-      #global-search { top:72px; width:calc(100vw - 48px); }
       #reviews-widget { display:none; }
       .chat-fab-bubble { bottom:70px; }
       .chat-fab-panel { bottom:138px; }
@@ -357,17 +350,10 @@
 </head>
 <body>
 
-<!-- GLOBAL SEARCH (fijo en todas las secciones) -->
-<div id="global-search" onclick="goTo(1)">
-  <span class="gs-icon">🔍</span>
-  <input type="text" placeholder="Buscar en la tienda..." onkeydown="if(event.key==='Enter')goTo(1)" onclick="event.stopPropagation()">
-</div>
-
 <!-- NAVBAR -->
 <nav id="navbar">
   <a href="#" onclick="goTo(0);return false" class="nav-logo">
-    <div class="nav-logo-icon">M</div>
-    <span class="nav-logo-text">Moya<span>Ops</span></span>
+    <img src="{% static 'core/logo.png' %}" alt="MoyaOps" class="nav-logo-img">
   </a>
   <ul class="nav-links">
     <li><a onclick="goTo(3)">Sistema de gestión</a></li>
@@ -465,30 +451,39 @@
 
   <!-- S2 BUSCADOR -->
   <section class="fp-section" id="s-search">
-    <div class="section-eyebrow">Tienda y accesorios</div>
-    <h2 class="section-title" style="color:var(--navy)">Busca en nuestra tienda<br>tus accesorios o repuestos</h2>
-    <p class="section-sub">Miles de productos de talleres verificados, con garantía incluida y envío rápido.</p>
-    <div class="search-bar">
-      <span style="font-size:17px;margin-right:3px">🔍</span>
-      <input type="text" placeholder="Ej: cargador iPhone 15, pantalla Samsung S24...">
-      <div class="search-divider"></div>
-      <div class="search-loc"><span>📍</span><span>Madrid, España</span></div>
-      <button class="search-btn">Buscar</button>
+    <!-- Zona 1: header + buscador -->
+    <div class="s-search-header">
+      <div class="section-eyebrow">Tienda y accesorios</div>
+      <h2 class="section-title" style="color:var(--navy)">Busca en nuestra tienda<br>tus accesorios o repuestos</h2>
+      <p class="section-sub">Miles de productos de talleres verificados, con garantía incluida y envío rápido.</p>
+      <div class="search-bar">
+        <span style="font-size:17px;margin-right:3px">🔍</span>
+        <input type="text" placeholder="Ej: cargador iPhone 15, pantalla Samsung S24...">
+        <div class="search-divider"></div>
+        <div class="search-loc"><span>📍</span><span>Madrid, España</span></div>
+        <button class="search-btn">Buscar</button>
+      </div>
     </div>
-    <div class="cat-grid">
-      <div class="cat-tile">📱 Móviles</div>
-      <div class="cat-tile">💻 Portátiles</div>
-      <div class="cat-tile">📟 Tablets</div>
-      <div class="cat-tile">🎮 Consolas</div>
-      <div class="cat-tile">📺 TV &amp; Audio</div>
-      <div class="cat-tile">🖨️ Impresoras</div>
-      <div class="cat-tile">⌨️ Periféricos</div>
-      <div class="cat-tile">⚙️ Otros</div>
+    <!-- Zona 2: categorías -->
+    <div class="s-search-body">
+      <div class="cat-grid">
+        <div class="cat-tile">📱 Móviles</div>
+        <div class="cat-tile">💻 Portátiles</div>
+        <div class="cat-tile">📟 Tablets</div>
+        <div class="cat-tile">🎮 Consolas</div>
+        <div class="cat-tile">📺 TV &amp; Audio</div>
+        <div class="cat-tile">🖨️ Impresoras</div>
+        <div class="cat-tile">⌨️ Periféricos</div>
+        <div class="cat-tile">⚙️ Otros</div>
+      </div>
     </div>
-    <div class="store-banner">
-      <span style="font-size:20px">🛒</span>
-      <span>¿Buscas también servicios? <strong>Encuentra talleres técnicos cerca de ti.</strong></span>
-      <a href="#">Ver directorio →</a>
+    <!-- Zona 3: banner -->
+    <div class="s-search-bottom">
+      <div class="store-banner">
+        <span style="font-size:20px">🛒</span>
+        <span>¿Buscas también servicios? <strong>Encuentra talleres técnicos cerca de ti.</strong></span>
+        <a href="#">Ver directorio →</a>
+      </div>
     </div>
   </section>
 
@@ -679,8 +674,7 @@
     </div>
     <div class="footer-bar">
       <div class="footer-logo">
-        <div style="width:26px;height:26px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:white">M</div>
-        Moya<span>Ops</span>
+        <img src="{% static 'core/logo.png' %}" alt="MoyaOps" class="footer-logo-img">
       </div>
       <ul class="footer-links">
         <li><a href="#" onclick="goTo(3);return false">Sistema</a></li>
@@ -695,6 +689,11 @@
         <a href="#" class="social-btn" title="TikTok">🎵</a>
         <a href="#" class="social-btn" title="YouTube">▶️</a>
         <a href="#" class="social-btn" title="WhatsApp">💬</a>
+      </div>
+      <div class="footer-copyright">
+        © 2026 MoyaOps &nbsp;·&nbsp; Todos los derechos reservados &nbsp;·&nbsp;
+        Software desarrollado por <strong>Yonalby Moya</strong> &nbsp;·&nbsp;
+        Plataforma SaaS para servicios técnicos
       </div>
     </div>
   </section>
