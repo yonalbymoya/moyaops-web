@@ -10,9 +10,9 @@ class Command(BaseCommand):
         cfg, _ = SiteSettings.objects.get_or_create(pk=1)
         cfg.hero_badge = "✦ Plataforma SaaS para técnicos"
         cfg.hero_subtitle = "Llega a más clientes, gestiona tu taller y crece con MoyaOps. Tu negocio técnico en la plataforma de confianza."
-        cfg.countries_count = 12
-        cfg.technicians_count = 500
-        cfg.orders_count = 50
+        cfg.countries_count = 2
+        cfg.technicians_count = 2
+        cfg.orders_count = 18
         cfg.support_email = "hola@moyaops.com"
         cfg.app_url = "https://app.moyaops.com"
         cfg.save()
