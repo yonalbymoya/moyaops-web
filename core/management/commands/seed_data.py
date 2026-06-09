@@ -47,10 +47,18 @@ class Command(BaseCommand):
         # Pricing
         basico, _ = PricingPlan.objects.update_or_create(
             name="Básico",
-            defaults={"monthly_price": "0.00", "annual_monthly_price": "0.00", "annual_total": None, "badge": "🎁 14 días gratis", "order": 0}
+            defaults={"monthly_price": "0.00", "annual_monthly_price": "0.00", "annual_total": None, "badge": "✨ Freemium", "order": 0}
         )
         basico.features.all().delete()
-        for i, feat in enumerate(["14 días de prueba gratis", "Acceso a todas las funciones", "1 tienda", "Empleados ilimitados", "App móvil incluida", "Soporte incluido"]):
+        for i, feat in enumerate([
+            "📊 Dashboard — Acceso completo",
+            "🛒 Ventas POS — Acceso parcial",
+            "📦 Inventario — Acceso parcial",
+            "👥 Clientes — Acceso parcial",
+            "🏪 Distribuidores — Acceso parcial",
+            "👷 Hasta 2 trabajadores",
+            "📈 Reportes, Métricas, IA y Chat incluidos",
+        ]):
             PricingFeature.objects.create(plan=basico, text=feat, order=i)
 
         pro, _ = PricingPlan.objects.update_or_create(
@@ -58,7 +66,14 @@ class Command(BaseCommand):
             defaults={"monthly_price": "15.00", "annual_monthly_price": "12.90", "annual_total": "154.80", "is_featured": True, "badge": "⭐ Más popular", "order": 1}
         )
         pro.features.all().delete()
-        for i, feat in enumerate(["Órdenes ilimitadas", "Tiendas ilimitadas", "Facturación completa + QR", "Inventario y POS", "Reportes avanzados", "WhatsApp integrado", "Soporte prioritario"]):
+        for i, feat in enumerate([
+            "✅ Todo lo del plan Freemium",
+            "🛒 Acceso a Ventas POS",
+            "🤖 Acceso a la IA y chats integrados",
+            "📊 Visualizar Reportes y Métricas",
+            "🎯 Soporte técnico",
+            "👷 Empleados ilimitados",
+        ]):
             PricingFeature.objects.create(plan=pro, text=feat, order=i)
 
         PricingPlan.objects.update_or_create(name="Empresa", defaults={"is_coming_soon": True, "order": 2})

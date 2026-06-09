@@ -229,6 +229,7 @@
     .price-btn:hover { border-color:var(--green); color:var(--green-dark); }
     .price-card.featured .price-btn { background:var(--green); border-color:var(--green); color:white; }
     .price-card.featured .price-btn:hover { background:var(--green-dark); }
+    .price-disclaimer { font-size:10px; color:#94a3b8; margin-top:10px; line-height:1.4; }
 
     /* ══ S7 PAÍSES ══ */
     #s-countries { background:var(--navy); display:flex; align-items:center; padding:140px 48px 80px; gap:52px; }
@@ -595,16 +596,28 @@
             <li>{{ feat.text }}</li>
             {% endfor %}
           </ul>
-          <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">{% if plan.is_featured %}Comenzar ahora →{% else %}Empezar ahora{% endif %}</button>
+          {% if plan.monthly_price_display == "0" or plan.monthly_price_display == "0.00" %}
+          <p class="price-disclaimer">*ciertas secciones podrán ser limitadas a un uso máximo.</p>
+          {% endif %}
+          <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">{% if plan.is_featured %}Comenzar ahora →{% else %}Empezar gratis →{% endif %}</button>
         {% endif %}
       </div>
       {% empty %}
       <div class="price-card">
-        <div class="price-badge">🎁 14 días gratis</div>
+        <div class="price-badge">✨ Freemium</div>
         <div class="price-plan">Básico</div>
         <div class="price-amount" style="font-size:2.2rem;font-weight:800;color:var(--green);letter-spacing:-1px;margin-bottom:4px">Gratis</div>
-        <div class="price-period p-period" data-monthly="para siempre · 1 tienda" data-annual="para siempre · 1 tienda">para siempre · 1 tienda</div>
-        <ul class="price-features"><li>14 días de prueba gratis</li><li>Acceso a todas las funciones</li><li>1 tienda</li><li>Empleados ilimitados</li><li>App móvil incluida</li><li>Soporte incluido</li></ul>
+        <div class="price-period p-period" data-monthly="para siempre · sin tarjeta" data-annual="para siempre · sin tarjeta">para siempre · sin tarjeta</div>
+        <ul class="price-features">
+          <li>📊 Dashboard — Acceso completo</li>
+          <li>🛒 Ventas POS — Acceso parcial</li>
+          <li>📦 Inventario — Acceso parcial</li>
+          <li>👥 Clientes — Acceso parcial</li>
+          <li>🏪 Distribuidores — Acceso parcial</li>
+          <li>👷 Hasta 2 trabajadores</li>
+          <li>📈 Reportes, Métricas, IA y Chat incluidos</li>
+        </ul>
+        <p class="price-disclaimer">*ciertas secciones podrán ser limitadas a un uso máximo.</p>
         <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Empezar gratis →</button>
       </div>
       <div class="price-card featured">
@@ -613,7 +626,14 @@
         <div class="price-amount"><sup>€</sup><span class="p-num" data-monthly="15" data-annual="12.90">15</span></div>
         <div class="price-period p-period" data-monthly="por mes · por taller" data-annual="por mes · facturado anualmente">por mes · por taller</div>
         <div class="price-annual-note p-note">€154.80 facturado anualmente</div>
-        <ul class="price-features"><li>Órdenes ilimitadas</li><li>Tiendas ilimitadas</li><li>Facturación completa + QR</li><li>Inventario y POS</li><li>Reportes avanzados</li><li>WhatsApp integrado</li><li>Soporte prioritario</li></ul>
+        <ul class="price-features">
+          <li>✅ Todo lo del plan Freemium</li>
+          <li>🛒 Acceso a Ventas POS</li>
+          <li>🤖 Acceso a la IA y chats integrados</li>
+          <li>📊 Visualizar Reportes y Métricas</li>
+          <li>🎯 Soporte técnico</li>
+          <li>👷 Empleados ilimitados</li>
+        </ul>
         <button class="price-btn" onclick="window.open('{{ cfg.app_url }}')">Comenzar ahora →</button>
       </div>
       <div class="price-card coming-soon">
