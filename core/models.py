@@ -9,7 +9,7 @@ class SiteSettings(models.Model):
     countries_count     = models.PositiveIntegerField(default=12)
     technicians_count   = models.PositiveIntegerField(default=500)
     orders_count        = models.PositiveIntegerField(default=50, help_text="Se muestra como Xk+ (ej: 50 → 50k+)")
-    support_email   = models.EmailField(default="hola@moyaops.com")
+    support_email   = models.EmailField(default="support@moyaops.com")
     app_url         = models.URLField(default="https://app.moyaops.com")
 
     class Meta:

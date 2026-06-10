@@ -13,7 +13,7 @@ class Command(BaseCommand):
         cfg.countries_count = 2
         cfg.technicians_count = 2
         cfg.orders_count = 18
-        cfg.support_email = "hola@moyaops.com"
+        cfg.support_email = "support@moyaops.com"
         cfg.app_url = "https://app.moyaops.com"
         cfg.save()
 
@@ -39,7 +39,7 @@ class Command(BaseCommand):
                 ("🛡️", "Garantía",         "garantía,garantia",           "Todos los servicios incluyen garantía de 30 días en mano de obra y piezas. 🛡️ ¿Tienes un problema?"),
                 ("💰", "Métodos de pago",  "pago,pagar,método,tarjeta",   "Aceptamos efectivo, tarjeta y transferencia bancaria. El pago se realiza al retirar el equipo. 💰"),
                 ("🚗", "A domicilio",      "domicilio,casa,recogida",     "Ofrecemos servicio a domicilio en zonas seleccionadas. 🚗 ¿En qué ciudad estás?"),
-                ("🆘", "Soporte",          "soporte,ayuda,problema",      "Para soporte escríbenos a hola@moyaops.com o por WhatsApp. ¿En qué necesitas ayuda?"),
+                ("🆘", "Soporte",          "soporte,ayuda,problema",      "Para soporte escríbenos a support@moyaops.com o por WhatsApp. ¿En qué necesitas ayuda?"),
             ]
             for i, (emoji, label, keywords, response) in enumerate(entries):
                 ChatbotEntry.objects.create(emoji=emoji, label=label, trigger_keywords=keywords, response=response, order=i)
